@@ -1,5 +1,6 @@
 ---
 import './src/styles/global.css';
+import { AstroFont } from 'astro-font';
 
 const { title = 'YetonDew Portfolio'} = Astro.props;	
 ---
@@ -12,6 +13,23 @@ const { title = 'YetonDew Portfolio'} = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+
+		
+		    <AstroFont
+      config={[
+        {
+          src: [],
+          name: "IBM Plex Sans",
+          // Google Fonts URL
+		
+		  googleFontsURL: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap",
+          preload: true,
+          display: "swap",
+          selector: "body",
+          fallback: "sans-serif",
+        },
+      ]}
+    />
 	</head>
 	<body>
 		<slot />

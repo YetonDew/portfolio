@@ -1,7 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-    --color-primary-light: #d86aff;
-    --color-primary: #7f00b2;
+    --color-primary-light: #F2F3F5;
+    --color-primary: #FFFFFF;
     --color-primary-dark: #4b0081;
+
+    
+    --font-*: initial;
+    --font-ibm: "IBM Plex Sans", "sans-serif";
 }

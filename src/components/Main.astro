@@ -1,12 +1,36 @@
-<section class="bg-primary-light min-h-screen">
+---
+import Github from '../assets/github.astro';
+import Linkedin from '../assets/linkedin.astro';
+import Mail from '../assets/mail.astro';
+---
 
-    <div class="grid grid-cols-10 grid-rows-6 gap-4 px-25 py-15">
-        <div class="col-span-3 row-span-2 bg-primary rounded-2xl h-[200px]">1</div>
+
+<section class="bg-primary-light min-h-screen py-10 px-7">
+
+    <div class="h-[90vh] w-full grid grid-cols-10 grid-rows-6 gap-4">
+        <div class="col-span-3 row-span-2 bg-primary rounded-2xl">
+            <section class="flex flex-col justify-center items-start h-full py-20 px-10 gap-4">
+                <h1 class="text-3xl font-ibm">Hi, I'm Jefferson ──</h1>
+                <p class="font-ibm">Software Engineer, currently studying at 42 Warsaw.</p>
+            </section>
+        </div>
         <div class="col-span-2 row-span-2 col-start-4 bg-primary rounded-2xl">2</div>
         <div class="col-span-2 row-span-2 col-start-6 bg-primary rounded-2xl">3</div>
-        <div class="col-start-8 bg-primary rounded-2xl">4</div>
-        <div class="col-start-9 bg-primary rounded-2xl">5</div>
-        <div class="col-start-10 bg-primary rounded-2xl">6</div>
+        <div class="col-start-8 bg-primary rounded-2xl">
+            <a class="text-black h-full w-full flex justify-center items-center" href="https://github.com/YetonDew" target="_blank" aria-label="github" title="github YetonDew">
+                <Github />
+            </a>
+        </div>
+        <div class="col-start-9 bg-primary rounded-2xl">
+            <a class="text-black h-full w-full flex justify-center items-center" href="https://www.linkedin.com/in/yeton/" target="_blank" aria-label="linkedin" title="linkedin YetonDew">
+                <Linkedin />
+            </a>
+        </div>
+        <div class="col-start-10 bg-primary rounded-2xl">
+            <a class="text-black h-full w-full flex justify-center items-center" href="https://www.linkedin.com/in/yeton/" target="_blank" aria-label="linkedin" title="linkedin YetonDew">
+                <Mail />
+            </a>
+        </div>
         <div class="col-span-2 row-span-2 col-start-1 row-start-3 bg-primary rounded-2xl">7</div>
         <div class="col-span-2 row-span-2 col-start-3 row-start-3 bg-primary rounded-2xl">8</div>
         <div class="col-span-3 row-span-2 col-start-8 row-start-2 bg-primary rounded-2xl">9</div>
