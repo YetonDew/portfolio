@@ -9,3 +9,11 @@
     --font-*: initial;
     --font-ibm: "IBM Plex Sans", "sans-serif";
 }
+
+@layer {
+    .hover-overflow-top-visible:hover {
+  overflow: visible;
+  overflow-x: hidden;
+  overflow-y: clip;
+}
+}
