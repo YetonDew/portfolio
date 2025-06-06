@@ -1,6 +1,7 @@
 ---
 import './src/styles/global.css';
-import { AstroFont } from 'astro-font';
+// import { AstroFont } from 'astro-font';
+import '@fontsource-variable/ibm-plex-sans';
 
 const { title = 'YetonDew Portfolio'} = Astro.props;	
 ---
@@ -14,8 +15,7 @@ const { title = 'YetonDew Portfolio'} = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
-		
-		    <AstroFont
+		    <!-- <AstroFont
       config={[
         {
           src: [],
@@ -29,7 +29,7 @@ const { title = 'YetonDew Portfolio'} = Astro.props;
           fallback: "sans-serif",
         },
       ]}
-    />
+    /> -->
 	</head>
 	<body>
 		<slot />
@@ -42,5 +42,6 @@ const { title = 'YetonDew Portfolio'} = Astro.props;
 		margin: 0;
 		width: 100%;
 		height: 100%;
+		font-family: 'IBM Plex Sans Variable', sans-serif;
 	}
 </style>
