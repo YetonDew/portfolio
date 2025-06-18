@@ -1,0 +1,343 @@
+<label for="toggle" id="toggle-label">
+  <div id="toggle-div">
+    <input type="checkbox" id="toggle" />
+    <div class="clouds">
+      <div class="cloud cloud-1"></div>
+      <div class="cloud cloud-2"></div>
+      <div class="cloud cloud-3"></div>
+    </div>
+    <div class="backdrops">
+      <div class="backdrop"></div>
+    </div>
+    <div class="stars">
+      <div class="star star-1"></div>
+      <div class="star star-2"></div>
+      <div class="star star-3"></div>
+    </div>
+    <div class="sun-moon">
+      <div class="crater"></div>
+    </div>
+  </div>
+</label>
+
+<style>
+
+#toggle {
+  display: none;
+}
+
+#toggle-label {
+  cursor: pointer;
+  outline: transparent;
+}
+
+#toggle-div {
+  height: 60px;
+  width: 120px;
+  background-color: #357bb3;
+  border-radius: 50px;
+  position: relative;
+  overflow: hidden;
+  transition: all 300ms ease;
+  box-shadow: inset 1px 2.5px 2.5px rgba(0, 0, 0, 0.2)
+}
+
+.backdrops {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  height: 50px;
+  width: 50px;
+  transition: all 300ms ease;
+}
+
+.backdrop {
+  height: 100px;
+  width: 100px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 100%;
+
+  position: absolute;
+  left: 30%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 300ms ease;
+}
+
+.backdrop::after,
+.backdrop::before {
+  content: "";
+  height: 100px;
+  width: 100px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 100%;
+  position: absolute;
+  transition: all 300ms ease;
+}
+
+.backdrop::before {
+  left: 15%;
+}
+
+.backdrop::after {
+  left: 30%;
+}
+
+.clouds {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 50%;
+  left: 0;
+  transform: translate(0, -50%);
+  transition: all 300ms ease;
+}
+
+.cloud {
+  position: absolute;
+  right: 10%;
+  top: 50%;
+  background-color: #fbfbfb;
+  height: 10px;
+  width: 50px;
+  border-radius: 0 50px 50px 50px;
+  transform: scale(-0.8, 0.8);
+}
+
+.cloud::before {
+  content: "";
+  position: absolute;
+  background-color: #fbfbfb;
+  height: 10px;
+  width: 40px;
+  bottom: 9px;
+  left: 0;
+  border-radius: 50px 50px 0 0px;
+}
+
+.cloud::after {
+  content: "";
+  position: absolute;
+  background-color: #fbfbfb;
+  height: 20px;
+  width: 20px;
+  bottom: 9px;
+  left: 5px;
+  border-radius: 100%;
+}
+
+.cloud-1 {
+  top: 92%;
+  right: 30%;
+}
+
+.cloud-2 {
+  top: 85%;
+  right: 10%;
+  transform: scale(-1, 1);
+}
+
+.cloud-3 {
+  top: 60%;
+  right: -18%;
+  transform: rotateZ(-50deg) scale(-1, 1);
+}
+
+.sun-moon {
+  height: 50px;
+  width: 50px;
+  background-color: #E7B456;
+  border-radius: 100%;
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  transition: 300ms ease;
+}
+
+
+/* NIGHT */
+
+.stars {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: -50%;
+  left: 0;
+  transform: translate(0, -50%);
+  transition: all 300ms ease;
+}
+
+.star {
+  position: absolute;
+  left: 10%;
+  top: 50%;
+  height: 3px;
+  width: 3px;
+  border-radius: 100%;
+  background-color: #e3e6ea;
+  box-shadow: 0 0 2px #fff;
+  animation: twinkle 1s infinite alternate;
+}
+
+.star::before {
+  content: "";
+  position: absolute;
+  left: 300%;
+  top: 300%;
+  height: 2px;
+  width: 2px;
+  border-radius: 100%;
+  background-color: #c4c9d2;
+  box-shadow: 0 0 2px #fff;
+}
+
+.star::after {
+  content: "";
+  position: absolute;
+  left: 400%;
+  bottom: 400%;
+  height: 2.5px;
+  width: 2.5px;
+  border-radius: 100%;
+  background-color: #c4c9d2;
+  box-shadow: 0 0 2px #fff;
+}
+
+.star-2 {
+  left: 30%;
+  top: 11%;
+  transform: rotateZ(75deg) scale(1.1);
+  animation-delay: 300ms;
+}
+
+.star-3 {
+  left: 40%;
+  top: 60%;
+  transform: rotateZ(150deg) scale(0.8);
+  animation-delay: 600ms;
+}
+
+.crater {
+  display: none;
+  position: absolute;
+  left: 30%;
+  top: 60%;
+  transform: translate(-50%, -50%);
+  height: 15px;
+  width: 15px;
+  background-color: #e3dbc7;
+  border-radius: 100%;
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2) inset;
+}
+
+.crater::before {
+  content: "";
+  height: 7.5px;
+  width: 7.5px;
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  background-color: #e3dbc7;
+  border-radius: 100%;
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2) inset;
+}
+
+.crater::after {
+  content: "";
+  height: 10px;
+  width: 10px;
+  position: absolute;
+  bottom: 40%;
+  left: 150%;
+  background-color: #e3dbc7;
+  border-radius: 100%;
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2) inset;
+}
+
+#toggle-div.night {
+  background-color: #151b36;
+}
+
+input:checked ~ .clouds {
+  top: 150%;
+}
+
+input:checked ~ .sun-moon {
+  left: calc(100% - 55px);
+  background-color: #fbf3df;
+  transform: rotateZ(180deg);
+}
+
+/* input:checked ~ .sun-moon:hover {
+  left: calc(100% - 57.5px);
+}
+ */
+input:checked ~ .backdrops {
+  left: calc(100% - 65px);
+}
+
+input:checked ~ .sun-moon .crater {
+  display: block;
+}
+
+input:checked ~ .stars {
+  top: 50%;
+}
+
+/* ANIMATIONS */
+
+@keyframes twinkle {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0.5;
+  }
+}
+
+</style>
+
+<script>
+  function initToggle() {
+    const toggle = document.getElementById('toggle') as HTMLInputElement; // ← Cambiar aquí
+    const toggleDiv = document.getElementById('toggle-div') as HTMLElement; // ← Y aquí
+    const html = document.documentElement;
+
+    if (!toggle || !toggleDiv) {
+      console.warn('Toggle elements not found');
+      return;
+    }
+
+    // Verificar tema guardado
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+
+    // Aplicar tema inicial
+    html.classList.toggle('dark', isDark);
+    toggle.checked = isDark;
+    toggleDiv.classList.toggle('night', isDark);
+
+    toggle.addEventListener('change', (e) => {
+      e.preventDefault();
+      if (toggle.checked) {
+        toggleDiv.classList.add('night');
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        toggleDiv.classList.remove('night');
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initToggle);
+  } else {
+    initToggle();
+  }
+
+  document.addEventListener('astro:page-load', initToggle);
+</script>
