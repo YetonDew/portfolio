@@ -1,0 +1,172 @@
+import { useRef, useEffect, useState } from "react";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+
+mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN;
+
+export default function Map() {
+	const mapContainer = useRef(null);
+	const mapInstance = useRef(null);
+	const [isDark, setIsDark] = useState(
+		document.documentElement.classList.contains("dark")
+	);
+	const zoomLevels = [9, 5, 3];
+	const [zoomIndex, setZoomIndex] = useState(0);
+	const [plusVisible, setPlusVisible] = useState(false);
+	const currentStyle = useRef(isDark ? "dark" : "light");
+
+	// Zoom
+	const handleZoomIn = () => {
+setZoomIndex(prev => {
+    if (prev <= 0) return prev; // no pasa de 9 (máximo)
+    const next = prev - 1;
+    if (mapInstance.current) {
+      mapInstance.current.easeTo({ zoom: zoomLevels[next], duration: 800 });
+    }
+    return next;
+  });
+	};
+
+	const handleZoomOut = () => {
+  setZoomIndex(prev => {
+    if (prev >= zoomLevels.length - 1) return prev; // no pasa de 3 (mínimo)
+    const next = prev + 1;
+    if (mapInstance.current) {
+      mapInstance.current.easeTo({ zoom: zoomLevels[next], duration: 1200 });
+    }
+    return next;
+  });
+		setPlusVisible(true);
+	};
+
+	// Inicializar mapa
+	useEffect(() => {
+		if (mapInstance.current) return;
+
+		mapInstance.current = new mapboxgl.Map({
+			container: mapContainer.current,
+			style: isDark
+				? "mapbox://styles/mapbox/navigation-night-v1"
+				: "mapbox://styles/mapbox/standard",
+			center: [21.0, 52.2],
+			zoom: zoomLevels[0],
+			scrollZoom: false,
+			doubleClickZoom: false,
+			touchZoomRotate: false,
+		});
+
+		const markerEl = document.createElement("div");
+		markerEl.style.width = "50px";
+		markerEl.style.height = "50px";
+		markerEl.style.backgroundImage = "url('/src/assets/memoji-1.png')";
+		markerEl.style.backgroundSize = "contain";
+		markerEl.style.backgroundRepeat = "no-repeat";
+
+		new mapboxgl.Marker(markerEl)
+			.setLngLat([20.9, 52.2])
+			.addTo(mapInstance.current);
+
+		return () => mapInstance.current.remove();
+	}, []);
+
+	// Detectar cambios de clase en <html> (dark/light)
+	useEffect(() => {
+		const observer = new MutationObserver(() => {
+			const dark = document.documentElement.classList.contains("dark");
+			if (dark !== isDark) {
+				const newStyle = dark
+					? "mapbox://styles/mapbox/navigation-night-v1"
+					: "mapbox://styles/mapbox/standard";
+
+				mapInstance.current.setStyle(newStyle);
+				currentStyle.current = newStyle;
+				setIsDark(dark);
+			}
+		});
+
+		observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
+		return () => observer.disconnect();
+	}, [isDark]);
+
+	return (
+		<div style={{ position: "relative", width: "100%", height: "120%" }}>
+			<div ref={mapContainer} style={{ width: "100%", height: "100%", position: "absolute" }} />
+
+			{/* Botones de zoom */}
+			<div
+				style={{
+					position: "absolute",
+					bottom: 50,
+					left: 10,
+					display: "flex",
+					flexDirection: "row",
+					width: "95%"
+				}}
+			>
+				<button
+					onClick={handleZoomOut}
+					onMouseEnter={(e) => {
+						e.currentTarget.style.boxShadow =
+							isDark
+								? "rgb(0 0 0 / 40%) 0px 0px 0px 1px, rgba(0 0 0 / 25%) 0px 0px 0px 6px"
+								: "rgb(255 255 255 / 40%) 0px 0px 0px 1px, rgba(255 255 255 / 25%) 0px 0px 0px 6px";
+					}}
+					onMouseLeave={(e) => {
+						e.currentTarget.style.boxShadow = "none";
+					}}
+					style={{
+						background: isDark ? "#000" : "#fff",
+						color: isDark ? "#fff" : "#000",
+						width: 36,
+						height: 36,
+						borderRadius: 18,
+						position: "absolute",
+						bottom: 14,
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						transition: "box-shadow 0.2s",
+						willChange: "transform",
+						cursor: "pointer",
+						zIndex: 1,
+					}}
+				>
+					-
+				</button>
+				<button
+					onClick={handleZoomIn}
+					onMouseEnter={(e) => {
+						e.currentTarget.style.boxShadow =
+							isDark
+								? "rgb(0 0 0 / 40%) 0px 0px 0px 1px, rgba(0 0 0 / 25%) 0px 0px 0px 6px"
+								: "rgb(255 255 255 / 40%) 0px 0px 0px 1px, rgba(255 255 255 / 25%) 0px 0px 0px 6px";
+					}}
+					onMouseLeave={(e) => {
+						e.currentTarget.style.boxShadow = "none";
+					}}
+					style={{
+						background: isDark ? "#000" : "#fff",
+						color: isDark ? "#fff" : "#000",
+						width: 36,
+						height: 36,
+						borderRadius: 18,
+						position: "absolute",
+						bottom: 14,
+						right: 14,
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						transition: "box-shadow 0.2s",
+						willChange: "transform",
+						cursor: "pointer",
+						zIndex: 1,
+						opacity: plusVisible ? 1 : 0,
+					}}
+				>
+					+
+				</button>
+			</div>
+		</div>
+	);
+}
