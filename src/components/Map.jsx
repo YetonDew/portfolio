@@ -17,29 +17,28 @@ export default function Map() {
 
 	// Zoom
 	const handleZoomIn = () => {
-setZoomIndex(prev => {
-    if (prev <= 0) return prev; // no pasa de 9 (máximo)
-    const next = prev - 1;
-    if (mapInstance.current) {
-      mapInstance.current.easeTo({ zoom: zoomLevels[next], duration: 800 });
-    }
-    return next;
-  });
+		setZoomIndex(prev => {
+			if (prev <= 0) return prev;
+			const next = prev - 1;
+			if (mapInstance.current) {
+				mapInstance.current.easeTo({ zoom: zoomLevels[next], duration: 800 });
+			}
+			return next;
+		});
 	};
 
 	const handleZoomOut = () => {
-  setZoomIndex(prev => {
-    if (prev >= zoomLevels.length - 1) return prev; // no pasa de 3 (mínimo)
-    const next = prev + 1;
-    if (mapInstance.current) {
-      mapInstance.current.easeTo({ zoom: zoomLevels[next], duration: 1200 });
-    }
-    return next;
-  });
-		setPlusVisible(true);
+		setZoomIndex(prev => {
+			if (prev >= zoomLevels.length - 1) return prev; // no pasa de 3 (mínimo)
+			const next = prev + 1;
+			if (mapInstance.current) {
+				mapInstance.current.easeTo({ zoom: zoomLevels[next], duration: 1200 });
+			}
+			return next;
+		});
 	};
 
-	// Inicializar mapa
+	// Map Init
 	useEffect(() => {
 		if (mapInstance.current) return;
 
@@ -69,7 +68,7 @@ setZoomIndex(prev => {
 		return () => mapInstance.current.remove();
 	}, []);
 
-	// Detectar cambios de clase en <html> (dark/light)
+	// Detect <html> (dark/light)
 	useEffect(() => {
 		const observer = new MutationObserver(() => {
 			const dark = document.documentElement.classList.contains("dark");
@@ -89,11 +88,19 @@ setZoomIndex(prev => {
 		return () => observer.disconnect();
 	}, [isDark]);
 
+	useEffect(() => {
+		if (zoomIndex === 0) {
+			setPlusVisible(false);
+		} else {
+			setPlusVisible(true);
+		}
+	}, [zoomIndex]);
+
 	return (
 		<div style={{ position: "relative", width: "100%", height: "120%" }}>
 			<div ref={mapContainer} style={{ width: "100%", height: "100%", position: "absolute" }} />
 
-			{/* Botones de zoom */}
+			{/* Zoom Buttons */}
 			<div
 				style={{
 					position: "absolute",
@@ -162,6 +169,7 @@ setZoomIndex(prev => {
 						cursor: "pointer",
 						zIndex: 1,
 						opacity: plusVisible ? 1 : 0,
+						transition: 'opacity 0.3s ease',
 					}}
 				>
 					+
