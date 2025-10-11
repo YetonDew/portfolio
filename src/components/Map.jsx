@@ -54,15 +54,51 @@ export default function Map() {
 			touchZoomRotate: false,
 		});
 
-		const markerEl = document.createElement("div");
-		markerEl.style.width = "50px";
-		markerEl.style.height = "50px";
-		markerEl.style.backgroundImage = "url('/src/assets/memoji-1.png')";
-		markerEl.style.backgroundSize = "contain";
-		markerEl.style.backgroundRepeat = "no-repeat";
+			// Create the outer marker
+	const markerEl = document.createElement("div");
+	markerEl.style.width = "100px";
+	markerEl.style.height = "100px";
+	markerEl.style.borderRadius = "50%";
+	markerEl.style.border = "3px solid rgb(255, 255, 255)";
+	markerEl.style.background = "rgba(152, 208, 255, 0.5)";
+	markerEl.style.zIndex = "1";
+	markerEl.style.display = "flex";
+	markerEl.style.alignItems = "center";
+	markerEl.style.justifyContent = "center";
+	markerEl.style.position = "relative"; // required for absolutely positioned img
+	markerEl.style.willChange = "transform";
+
+	// Create the inner div (optional, but can help for layout control)
+	const innerDiv = document.createElement("div");
+	innerDiv.style.position = "relative";
+	innerDiv.style.width = "100%";
+	innerDiv.style.height = "100%";
+
+	// Create the image
+	const img = document.createElement("img");
+	img.src = "/assets/duck.webp"; // use the correct root-relative path
+	img.style.visibility = "inherit";
+	img.style.position = "absolute";
+	img.style.inset = "0px";
+	img.style.boxSizing = "border-box";
+	img.style.padding = "0px";
+	img.style.border = "none";
+	img.style.margin = "auto";
+	img.style.display = "block";
+	img.style.width = "0px";
+	img.style.height = "0px";
+	img.style.minWidth = "50%";
+	img.style.maxWidth = "50%";
+	img.style.minHeight = "50%";
+	img.style.maxHeight = "50%";
+
+	// Nest elements
+	innerDiv.appendChild(img);
+	markerEl.appendChild(innerDiv);
+
 
 		new mapboxgl.Marker(markerEl)
-			.setLngLat([20.9, 52.2])
+			.setLngLat([21.0, 52.22])
 			.addTo(mapInstance.current);
 
 		return () => mapInstance.current.remove();
@@ -146,7 +182,7 @@ export default function Map() {
 					onMouseEnter={(e) => {
 						e.currentTarget.style.boxShadow =
 							isDark
-								? "rgb(0 0 0 / 40%) 0px 0px 0px 1px, rgba(0 0 0 / 25%) 0px 0px 0px 6px"
+								? "rgb(0 0 0 / 40%) 0px 0px 0px 2px, rgba(0 0 0 / 25%) 0px 0px 0px 8px"
 								: "rgb(255 255 255 / 40%) 0px 0px 0px 1px, rgba(255 255 255 / 25%) 0px 0px 0px 6px";
 					}}
 					onMouseLeave={(e) => {
