@@ -76,7 +76,7 @@ export default function Map() {
 
 	// Create the image
 	const img = document.createElement("img");
-	img.src = "/assets/duck.webp"; // use the correct root-relative path
+	img.src = "/assets/duck.webp";
 	img.style.visibility = "inherit";
 	img.style.position = "absolute";
 	img.style.inset = "0px";
