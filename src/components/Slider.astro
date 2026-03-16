@@ -1,0 +1,179 @@
+---
+const defaultLogos = [
+  // Languages
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/c/c-original.svg', alt: 'C' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg', alt: 'Python' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg', alt: 'JavaScript' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg', alt: 'TypeScript' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg', alt: 'SQL' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg', alt: 'PHP' },
+  // Frontend
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/astro/astro-original.svg', alt: 'Astro' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg', alt: 'TailwindCSS' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg', alt: 'HTML' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg', alt: 'CSS' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bootstrap/bootstrap-original.svg', alt: 'Bootstrap' },
+  // CMS & Integration
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/wordpress/wordpress-plain-wordmark.svg', alt: 'WordPress' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-original.svg', alt: 'API' },
+  // Tools & Platforms
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg', alt: 'Git' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg', alt: 'Linux' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vercel/vercel-original.svg', alt: 'Vercel' },
+  { src: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cloudflare/cloudflare-original.svg', alt: 'Cloudflare' },
+];
+
+const logos  = Astro.props?.logos  ?? defaultLogos;
+const speed  = Astro.props?.speed  ?? '25s';
+const height = Astro.props?.height ?? '25px';
+const space  = Astro.props?.space  ?? '1rem';
+const gapY   = Astro.props?.gapY   ?? '1rem'; // separación vertical entre filas
+---
+<div class="logo-slider" style={`--speed:${speed}; --h:${height}; --space:${space}; --gapY:${gapY};`}>
+  <!-- FILA 1: izquierda -> derecha -->
+  <div class="scroller scroller-a" aria-label="Carrusel de logos fila 1">
+    <ul class="row" aria-hidden="false">
+      {logos.map((l, i) => (
+        <li class="item" key={`a1-${i}`}>
+          <img class="icon" src={l.src} alt={l.alt} loading="lazy" decoding="async" draggable="false" />
+          <span class="label">{l.alt}</span>
+        </li>
+      ))}
+    </ul>
+    <ul class="row" aria-hidden="true">
+      {logos.map((l, i) => (
+        <li class="item" key={`b1-${i}`}>
+          <img class="icon" src={l.src} alt="" loading="lazy" decoding="async" draggable="false" />
+          <span class="label" aria-hidden="true">{l.alt}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- FILA 2: derecha -> izquierda -->
+  <div class="scroller scroller-b" aria-label="Carrusel de logos fila 2">
+    <ul class="row" aria-hidden="false">
+      {logos.map((l, i) => (
+        <li class="item" key={`a2-${i}`}>
+          <img class="icon" src={l.src} alt={l.alt} loading="lazy" decoding="async" draggable="false" />
+          <span class="label">{l.alt}</span>
+        </li>
+      ))}
+    </ul>
+    <ul class="row" aria-hidden="true">
+      {logos.map((l, i) => (
+        <li class="item" key={`b2-${i}`}>
+          <img class="icon" src={l.src} alt="" loading="lazy" decoding="async" draggable="false" />
+          <span class="label" aria-hidden="true">{l.alt}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<style>
+.logo-slider{
+  --speed:15s; --h:40px; --space:3rem; --gapY:1rem;
+  width:100%;
+  overflow:hidden;
+  padding:3rem 0;
+  display:flex;
+  flex-direction:column;
+  gap: var(--gapY);
+  background:transparent;
+  -webkit-mask-image:linear-gradient(to right, transparent 0, #000000ca 6%, #000000 94%, transparent 100%);
+          mask-image:linear-gradient(to right, transparent 0, #000000ca 6%, #000000 94%, transparent 100%);
+}
+
+/* Cada fila es un track animado */
+.scroller{
+  display:flex;
+  gap: var(--space);
+  width:max-content;
+  will-change: transform;
+  animation: slide var(--speed) linear infinite;
+}
+.logo-slider:hover .scroller{ animation-play-state: paused; }
+
+/* Dirección opuesta para la segunda fila */
+.scroller-b{ animation-direction: reverse; }
+
+.row{
+  display:flex; align-items:center; list-style:none;
+  margin:0; padding:0;
+}
+
+/* === TAG/PILL === */
+.item{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  gap:.6rem;
+  padding:.45rem .85rem;
+  border-radius: 20px;
+  /* light mode */
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,.10);
+  box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 0 rgba(255,255,255,.8) inset;
+  backdrop-filter: blur(2px);
+  white-space:nowrap;
+  transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.item + .item{ margin-left: var(--space); }
+
+.item:hover{
+  transform: translateY(-2px);
+  background: #f5f5f5;
+  border-color: rgba(0,0,0,.16);
+  box-shadow: 0 4px 10px rgba(0,0,0,.10), 0 1px 0 rgba(255,255,255,.8) inset;
+}
+
+:global(html.dark) .item {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 1px 0 rgba(255,255,255,.06) inset;
+}
+
+:global(html.dark) .item:hover {
+  background: rgba(255,255,255,.10);
+  border-color: rgba(255,255,255,.18);
+}
+
+:global(html.dark) .label { color: #EDEDED; }
+
+.icon{
+  height: var(--h);
+  width: auto;
+  display:block;
+  pointer-events:none;
+  user-select:none;
+  transition: transform .3s ease, filter .3s ease;
+}
+.item:hover .icon{ transform: scale(1.06); filter:saturate(1.1); }
+
+.label{
+  line-height:1;
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.2px;
+  color: #27272a; /* light mode: zinc-800 */
+}
+
+/* Animación infinita (lista duplicada) */
+@keyframes slide{
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Motion safe */
+@media (prefers-reduced-motion: reduce){
+  .scroller{ animation:none; transform:none; }
+}
+
+/* Responsive */
+@media (max-width:640px){
+  .logo-slider{ padding:2rem 0; }
+  .icon{ height: calc(var(--h) * .8); }
+  .label{ font-size:13px; }
+}
+</style>

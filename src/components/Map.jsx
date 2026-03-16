@@ -10,6 +10,7 @@ export default function Map() {
 	const [isDark, setIsDark] = useState(
 		document.documentElement.classList.contains("dark")
 	);
+const [webGLSupported, setWebGLSupported] = useState(true);
 	const zoomLevels = [9, 5, 3];
 	const [zoomIndex, setZoomIndex] = useState(0);
 	const [plusVisible, setPlusVisible] = useState(false);
@@ -40,6 +41,11 @@ export default function Map() {
 
 	// Map Init
 	useEffect(() => {
+		if (typeof window === "undefined") return; // SSR guard
+		if (!mapboxgl.supported()) {
+			setWebGLSupported(false);
+			return;
+		}
 		if (mapInstance.current) return;
 
 		mapInstance.current = new mapboxgl.Map({
@@ -54,54 +60,57 @@ export default function Map() {
 			touchZoomRotate: false,
 		});
 
-			// Create the outer marker
-	const markerEl = document.createElement("div");
-	markerEl.style.width = "100px";
-	markerEl.style.height = "100px";
-	markerEl.style.borderRadius = "50%";
-	markerEl.style.border = "3px solid rgb(255, 255, 255)";
-	markerEl.style.background = "rgba(152, 208, 255, 0.5)";
-	markerEl.style.zIndex = "1";
-	markerEl.style.display = "flex";
-	markerEl.style.alignItems = "center";
-	markerEl.style.justifyContent = "center";
-	markerEl.style.position = "relative"; // required for absolutely positioned img
-	markerEl.style.willChange = "transform";
+		// Create the outer marker
+		const markerEl = document.createElement("div");
+		markerEl.style.width = "100px";
+		markerEl.style.height = "100px";
+		markerEl.style.borderRadius = "50%";
+		markerEl.style.border = "3px solid rgb(255, 255, 255)";
+		markerEl.style.background = "rgba(152, 208, 255, 0.5)";
+		markerEl.style.zIndex = "1";
+		markerEl.style.display = "flex";
+		markerEl.style.alignItems = "center";
+		markerEl.style.justifyContent = "center";
+		markerEl.style.position = "relative"; // required for absolutely positioned img
+		markerEl.style.willChange = "transform";
 
-	// Create the inner div (optional, but can help for layout control)
-	const innerDiv = document.createElement("div");
-	innerDiv.style.position = "relative";
-	innerDiv.style.width = "100%";
-	innerDiv.style.height = "100%";
+		// Create the inner div (optional, but can help for layout control)
+		const innerDiv = document.createElement("div");
+		innerDiv.style.position = "relative";
+		innerDiv.style.width = "100%";
+		innerDiv.style.height = "100%";
 
-	// Create the image
-	const img = document.createElement("img");
-	img.src = "/assets/duck.webp";
-	img.style.visibility = "inherit";
-	img.style.position = "absolute";
-	img.style.inset = "0px";
-	img.style.boxSizing = "border-box";
-	img.style.padding = "0px";
-	img.style.border = "none";
-	img.style.margin = "auto";
-	img.style.display = "block";
-	img.style.width = "0px";
-	img.style.height = "0px";
-	img.style.minWidth = "50%";
-	img.style.maxWidth = "50%";
-	img.style.minHeight = "50%";
-	img.style.maxHeight = "50%";
+		// Create the image
+		const img = document.createElement("img");
+		img.src = "/assets/duck.webp";
+		img.style.visibility = "inherit";
+		img.style.position = "absolute";
+		img.style.inset = "0px";
+		img.style.boxSizing = "border-box";
+		img.style.padding = "0px";
+		img.style.border = "none";
+		img.style.margin = "auto";
+		img.style.display = "block";
+		img.style.width = "0px";
+		img.style.height = "0px";
+		img.style.minWidth = "50%";
+		img.style.maxWidth = "50%";
+		img.style.minHeight = "50%";
+		img.style.maxHeight = "50%";
 
-	// Nest elements
-	innerDiv.appendChild(img);
-	markerEl.appendChild(innerDiv);
+		// Nest elements
+		innerDiv.appendChild(img);
+		markerEl.appendChild(innerDiv);
 
 
 		new mapboxgl.Marker(markerEl)
 			.setLngLat([21.0, 52.22])
 			.addTo(mapInstance.current);
 
-		return () => mapInstance.current.remove();
+		return () => {
+			mapInstance.current.remove();
+			mapInstance.current = null;
+		};
 	}, []);
 
 	// Detect <html> (dark/light)
@@ -131,6 +140,23 @@ export default function Map() {
 			setPlusVisible(true);
 		}
 	}, [zoomIndex]);
+
+	if (!webGLSupported) {
+		return (
+			<div style={{
+				width: "100%", height: "100%",
+				display: "flex", flexDirection: "column",
+				alignItems: "center", justifyContent: "center",
+				gap: 8, padding: 16, boxSizing: "border-box",
+				color: isDark ? "#a1a1aa" : "#71717a",
+				fontSize: 13, textAlign: "center",
+			}}>
+				<span style={{ fontSize: 28 }}>🗺️</span>
+				<span>Map unavailable</span>
+				<span style={{ fontSize: 11, opacity: 0.7 }}>Enable hardware acceleration in your browser</span>
+			</div>
+		);
+	}
 
 	return (
 		<div style={{ position: "relative", width: "100%", height: "120%" }}>
@@ -200,12 +226,11 @@ export default function Map() {
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
-						transition: "box-shadow 0.2s",
 						willChange: "transform",
 						cursor: "pointer",
 						zIndex: 1,
 						opacity: plusVisible ? 1 : 0,
-						transition: 'opacity 0.3s ease',
+						transition: 'box-shadow 0.2s, opacity 0.3s ease',
 					}}
 				>
 					+

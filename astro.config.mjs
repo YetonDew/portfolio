@@ -8,6 +8,7 @@ export default defineConfig({
 	integrations: [react()],
 	devToolbar: { enabled: false },
 	vite: {
-	plugins: [tailwindcss()]
+	plugins: [tailwindcss()],
+
   }
 });
