@@ -1,53 +1,141 @@
-<<<<<<< HEAD
-# portfolio
-my&lt;/>portfolio
-=======
-# Astro Starter Kit: Basics
+# Portfolio
 
-```sh
-pnpm create astro@latest -- --template basics
-```
+Personal portfolio built with Astro + React, featuring a bento-style layout, interactive Mapbox map, technology slider, and a global like counter with confetti.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+## Stack
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+- Astro 5
+- React 19 (`@astrojs/react`)
+- TailwindCSS 4 (`@tailwindcss/vite`)
+- Mapbox GL JS
+- canvas-confetti
+- Astro Vercel adapter (`@astrojs/vercel`)
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+## Features
 
-## 🚀 Project Structure
+- Responsive layout (mobile-first + bento grid on desktop)
+- Light/dark mode
+- Interactive map card with theme-aware style
+- Infinite technology slider
+- Like counter with:
+  - Increment and decrement (`like` / `unlike`)
+  - Per-browser cookie (`portfolio_liked`)
+  - Confetti effect on like
+  - Optimistic UI updates
 
-Inside of your Astro project, you'll see the following folders and files:
+## Main Structure
 
 ```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+src/
+  components/
+    Main.astro
+    Map.jsx
+    Slider.astro
+    Toggle.astro
+    LikeButton.jsx
+  pages/
+    index.astro
+    api/
+      likes.ts
+  layouts/
+    Layout.astro
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Environment Variables
 
-## 🧞 Commands
+Create a `.env` file in the project root:
 
-All commands are run from the root of the project, from a terminal:
+```bash
+PUBLIC_MAPBOX_TOKEN=your_mapbox_public_token
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+A template is included in `.env.example`.
 
-## 👀 Want to learn more?
+Notes:
+- Use `PUBLIC_` because this token is exposed to the client (frontend).
+- Do not commit `.env` to the repository.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
->>>>>>> 037f662 (Initial commit from Astro)
+## Scripts
+
+```bash
+pnpm install
+pnpm dev
+pnpm build
+pnpm preview
+```
+
+## Likes API
+
+Endpoint file: `src/pages/api/likes.ts`
+
+- `GET /api/likes`
+  - Returns `{ count }`
+- `POST /api/likes`
+  - If cookie `portfolio_liked=1` does not exist: increments and sets cookie
+  - If cookie already exists: does not increment
+- `DELETE /api/likes`
+  - If cookie exists: decrements (minimum 0) and clears cookie
+
+### Current persistence model
+
+The counter is currently stored in `/tmp/portfolio_likes.json`.
+
+This works locally, but in serverless environments (such as Vercel), `/tmp` is ephemeral. The counter may reset across executions or deployments.
+
+For true production persistence, migrate storage to a DB/KV solution (for example Vercel KV, Supabase, Redis, etc.).
+
+## Vercel Deployment
+
+This project is already configured for Vercel in `astro.config.mjs`:
+
+- `output: 'server'`
+- `adapter: vercel()`
+
+### Steps
+
+1. Import the repository in Vercel
+2. In **Settings > Environment Variables**, add:
+   - `PUBLIC_MAPBOX_TOKEN`
+3. Redeploy
+
+## Security
+
+- The hardcoded Mapbox token was removed from source code and git history.
+- The token is now read from `import.meta.env.PUBLIC_MAPBOX_TOKEN` in `src/components/Map.jsx`.
+
+## Troubleshooting
+
+### 1) Map does not appear
+
+- Verify `PUBLIC_MAPBOX_TOKEN` is configured.
+- If the console shows `WebGL not supported`, enable hardware acceleration in your browser.
+
+### 2) Push blocked by secret scanning (GH013)
+
+If a secret is committed again, GitHub push protection will block the push.
+
+Best practices:
+- Never hardcode secrets/tokens in source code
+- Use `.env` for local development
+- Use environment variables in Vercel/GitHub Actions
+
+### 3) Like counter does not persist in production
+
+This is expected with `/tmp` on serverless. Migrate storage for durable persistence.
+
+## Useful Commands
+
+```bash
+# development
+pnpm dev
+
+# local production build
+pnpm build && pnpm preview
+
+# check git status
+git status
+```
+
+## License
+
+Personal use.
