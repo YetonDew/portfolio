@@ -5,6 +5,7 @@ import Mail from '../assets/mail.astro';
 import Toggle from './Toggle.astro';
 import Mapa from './Map.jsx';
 import Slider from './Slider.astro';
+import LikeButton from './LikeButton.jsx';
 ---
 
 
@@ -76,7 +77,9 @@ import Slider from './Slider.astro';
         <div class="h-24 lg:h-auto bg-primary dark:bg-zinc-900 rounded-2xl lg:col-span-3 lg:row-span-2 lg:col-start-1 lg:row-start-5">11</div>
 
         <!-- Cell 12 -->
-        <div class="h-24 lg:h-auto bg-primary dark:bg-zinc-900 rounded-2xl lg:col-span-2 lg:row-span-2 lg:col-start-4 lg:row-start-5">12</div>
+        <div class="h-40 lg:h-auto bg-primary dark:bg-zinc-900 rounded-2xl lg:col-span-2 lg:row-span-2 lg:col-start-4 lg:row-start-5">
+            <LikeButton client:only="react" />
+        </div>
 
         <!-- Toggle -->
         <div class="py-4 lg:py-0 bg-primary dark:bg-zinc-900 rounded-2xl flex justify-center items-center lg:col-span-2 lg:row-span-2 lg:col-start-6 lg:row-start-5">
