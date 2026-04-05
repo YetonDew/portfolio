@@ -1,19 +1,23 @@
 import { useState, useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
-const COOKIE_KEY = "portfolio_liked";
 
-function HeartIcon({ filled }) {
+function StarIcon({ filled, scale = 1 }) {
 	return (
 		<svg
 			viewBox="0 0 24 24"
-			width="38"
-			height="38"
-			style={{ display: "block", transition: "transform 0.3s cubic-bezier(.34,1.56,.64,1)" }}
+			width="56"
+			height="56"
+			style={{
+				display: "block",
+				transform: `scale(${scale})`,
+				transformOrigin: "center",
+				transition: "transform 0.22s ease-out",
+			}}
 		>
 			<path
-				d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-				fill={filled ? "#f43f5e" : "none"}
-				stroke={filled ? "#f43f5e" : "currentColor"}
+				d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+				fill={filled ? "rgba(212,175,55,0.95)" : "none"}
+				stroke={filled ? "rgba(212,175,55,0.95)" : "currentColor"}
 				strokeWidth="2"
 				strokeLinecap="round"
 				strokeLinejoin="round"
@@ -22,13 +26,29 @@ function HeartIcon({ filled }) {
 	);
 }
 
-export default function LikeButton() {
+export default function LikeButton({ repo = "YetonDew/portfolio" }) {
 	const [count, setCount] = useState(null);
-	const [liked, setLiked] = useState(false);
 	const [popping, setPopping] = useState(false);
-	const [showThanks, setShowThanks] = useState(false);
 	const [isDark, setIsDark] = useState(false);
+	const [starHovered, setStarHovered] = useState(false);
+	const [starFilled, setStarFilled] = useState(false);
 	const buttonRef = useRef(null);
+	const repoUrl = `https://github.com/${repo}`;
+	const starUrl = `${repoUrl}/stargazers`;
+	const starredKey = `portfolio_starred_${repo}`;
+
+	const fetchStars = async () => {
+		try {
+			const res = await fetch(`https://api.github.com/repos/${repo}`);
+			if (!res.ok) {
+				throw new Error("Failed to fetch GitHub stars");
+			}
+			const data = await res.json();
+			setCount(typeof data.stargazers_count === "number" ? data.stargazers_count : 0);
+		} catch {
+			setCount(0);
+		}
+	};
 
 	useEffect(() => {
 		// Dark mode observer
@@ -37,38 +57,40 @@ export default function LikeButton() {
 		const obs = new MutationObserver(update);
 		obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
-		// Fetch count from API
-		fetch("/api/likes")
-			.then(r => r.json())
-			.then(d => setCount(d.count))
-			.catch(() => setCount(0));
-
-		// Check cookie on client for immediate UI state
-		setLiked(document.cookie.includes("portfolio_liked=1"));
-
-		return () => obs.disconnect();
-	}, []);
-
-	const handleLike = async () => {
-		if (liked) {
-			// Unlike — optimistic
-			setLiked(false);
-			setCount(c => Math.max(0, (c ?? 1) - 1));
-			try {
-				const res = await fetch("/api/likes", { method: "DELETE" });
-				const data = await res.json();
-				setCount(data.count);
-			} catch { /* keep optimistic */ }
-			return;
+		// Restore the local visual state after a previous click.
+		try {
+			setStarFilled(localStorage.getItem(starredKey) === "1");
+		} catch {
+			setStarFilled(false);
 		}
 
-		// Like — optimistic update
-		setLiked(true);
-		setCount(c => (c ?? 0) + 1);
+		// Fetch stars from GitHub repo
+		fetchStars();
+
+		// Re-fetch when the tab regains focus after starring on GitHub.
+		const onFocus = () => fetchStars();
+		const onVisibility = () => {
+			if (document.visibilityState === "visible") fetchStars();
+		};
+		window.addEventListener("focus", onFocus);
+		document.addEventListener("visibilitychange", onVisibility);
+
+		return () => {
+			obs.disconnect();
+			window.removeEventListener("focus", onFocus);
+			document.removeEventListener("visibilitychange", onVisibility);
+		};
+	}, [repo]);
+
+	const handleLike = () => {
+		setStarFilled(true);
+		try {
+			localStorage.setItem(starredKey, "1");
+		} catch {
+			// ignore storage failures
+		}
 		setPopping(true);
-		setShowThanks(true);
 		setTimeout(() => setPopping(false), 500);
-		setTimeout(() => setShowThanks(false), 2000);
 
 		// Confetti burst from the button position
 		if (buttonRef.current) {
@@ -86,20 +108,15 @@ export default function LikeButton() {
 			});
 		}
 
-		try {
-			const res = await fetch("/api/likes", { method: "POST" });
-			const data = await res.json();
-			setCount(data.count);
-		} catch {
-			// keep optimistic count
-		}
+		// Re-sync with real count after navigation has had time to happen.
+		setTimeout(() => {
+			fetchStars();
+		}, 2500);
 	};
 
 	const text = isDark ? "#e4e4e7" : "#27272a";
 	const sub = isDark ? "#71717a" : "#a1a1aa";
-	const bg = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)";
-	const bgHover = isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.07)";
-	const border = isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.08)";
+	const border = isDark ? "rgba(212,175,55,0.95)" : "rgba(212,175,55,0.95)";
 
 	return (
 		<div style={{
@@ -114,51 +131,38 @@ export default function LikeButton() {
 			boxSizing: "border-box",
 			position: "relative",
 		}}>
-			{/* Floating "Thanks!" */}
-			<span style={{
-				position: "absolute",
-				top: "28%",
-				fontSize: 13,
-				fontWeight: 600,
-				color: "#f43f5e",
-				opacity: showThanks ? 1 : 0,
-				transform: showThanks ? "translateY(-8px)" : "translateY(0px)",
-				transition: "opacity 0.4s ease, transform 0.4s ease",
-				pointerEvents: "none",
-			}}>
-				Thanks! 🎉
-			</span>
-
-			{/* Heart button */}
-			<button
+			{/* Star button */}
+			<a
 				ref={buttonRef}
+				href={starUrl}
+				target="_blank"
+				rel="noreferrer"
 				onClick={handleLike}
-				aria-label={liked ? "Already liked" : "Like this portfolio"}
+				aria-label="Star this repository on GitHub"
 				style={{
-					background: liked
-						? "rgba(244,63,94,0.12)"
-						: bg,
-					border: `1px solid ${liked ? "rgba(244,63,94,0.25)" : border}`,
-					borderRadius: "50%",
-					width: 72,
-					height: 72,
+					minWidth: 82,
+					height: 66,
+					padding: "0 20px",
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
 					cursor: "pointer",
+					textDecoration: "none",
 					transform: popping ? "scale(1.25)" : "scale(1)",
-					transition: "transform 0.3s cubic-bezier(.34,1.56,.64,1), background 0.3s ease, border-color 0.3s ease",
-					color: liked ? "#f43f5e" : sub,
+					transition: "transform 0.3s cubic-bezier(.34,1.56,.64,1), border-color 0.3s ease",
+					color: border,
+					background: isDark ? "transparent" : "transparent",
+					boxShadow: isDark ? "0 8px 24px rgba(0,0,0,0.08)" : "none",
 				}}
 				onMouseEnter={e => {
-					if (!liked) e.currentTarget.style.background = bgHover;
+					setStarHovered(true);
 				}}
 				onMouseLeave={e => {
-					if (!liked) e.currentTarget.style.background = bg;
+					setStarHovered(false);
 				}}
 			>
-				<HeartIcon filled={liked} />
-			</button>
+				<StarIcon filled={starFilled} scale={starHovered ? 1.18 : 1} />
+			</a>
 
 			{/* Count */}
 			<div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
@@ -173,8 +177,16 @@ export default function LikeButton() {
 					{count === null ? "—" : count}
 				</span>
 				<span style={{ fontSize: 12, color: sub, fontWeight: 500 }}>
-					{liked ? "click to unlike" : "like this portfolio"}
+					star this repo
 				</span>
+				<a
+					href={repoUrl}
+					target="_blank"
+					rel="noreferrer"
+					style={{ fontSize: 11, color: sub, opacity: 0.9, textDecoration: "none" }}
+				>
+					{repo}
+				</a>
 			</div>
 		</div>
 	);

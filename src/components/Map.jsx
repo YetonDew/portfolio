@@ -8,15 +8,31 @@ export default function Map() {
 	const mapContainer = useRef(null);
 	const mapInstance = useRef(null);
 	const [isDark, setIsDark] = useState(
-		document.documentElement.classList.contains("dark")
+		typeof document !== "undefined" && document.documentElement.classList.contains("dark")
 	);
-const [webGLSupported, setWebGLSupported] = useState(true);
+	const [webGLSupported, setWebGLSupported] = useState(true);
 	const zoomLevels = [9, 5, 3];
 	const [zoomIndex, setZoomIndex] = useState(0);
 	const [plusVisible, setPlusVisible] = useState(false);
-	const currentStyle = useRef(isDark ? "dark" : "light");
 
-	// Zoom
+	const controlButtonStyle = {
+		background: isDark ? "rgba(9, 9, 11, 0.8)" : "rgba(255, 255, 255, 0.9)",
+		color: isDark ? "#fff" : "#000",
+		width: 44,
+		height: 44,
+		borderRadius: 9999,
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		cursor: "pointer",
+		zIndex: 1,
+		boxShadow: "0 8px 24px rgba(0,0,0,0.10)",
+		backdropFilter: "blur(12px)",
+		WebkitBackdropFilter: "blur(12px)",
+		transition: "transform 0.3s ease, box-shadow 0.2s ease, opacity 0.3s ease",
+		willChange: "transform",
+	};
+
 	const handleZoomIn = () => {
 		setZoomIndex(prev => {
 			if (prev <= 0) return prev;
@@ -30,7 +46,7 @@ const [webGLSupported, setWebGLSupported] = useState(true);
 
 	const handleZoomOut = () => {
 		setZoomIndex(prev => {
-			if (prev >= zoomLevels.length - 1) return prev; // no pasa de 3 (mínimo)
+			if (prev >= zoomLevels.length - 1) return prev;
 			const next = prev + 1;
 			if (mapInstance.current) {
 				mapInstance.current.easeTo({ zoom: zoomLevels[next], duration: 1200 });
@@ -39,9 +55,8 @@ const [webGLSupported, setWebGLSupported] = useState(true);
 		});
 	};
 
-	// Map Init
 	useEffect(() => {
-		if (typeof window === "undefined") return; // SSR guard
+		if (typeof window === "undefined") return;
 		if (!mapboxgl.supported()) {
 			setWebGLSupported(false);
 			return;
@@ -60,7 +75,6 @@ const [webGLSupported, setWebGLSupported] = useState(true);
 			touchZoomRotate: false,
 		});
 
-		// Create the outer marker
 		const markerEl = document.createElement("div");
 		markerEl.style.width = "100px";
 		markerEl.style.height = "100px";
@@ -71,16 +85,14 @@ const [webGLSupported, setWebGLSupported] = useState(true);
 		markerEl.style.display = "flex";
 		markerEl.style.alignItems = "center";
 		markerEl.style.justifyContent = "center";
-		markerEl.style.position = "relative"; // required for absolutely positioned img
+		markerEl.style.position = "relative";
 		markerEl.style.willChange = "transform";
 
-		// Create the inner div (optional, but can help for layout control)
 		const innerDiv = document.createElement("div");
 		innerDiv.style.position = "relative";
 		innerDiv.style.width = "100%";
 		innerDiv.style.height = "100%";
 
-		// Create the image
 		const img = document.createElement("img");
 		img.src = "/assets/duck.webp";
 		img.style.visibility = "inherit";
@@ -98,10 +110,8 @@ const [webGLSupported, setWebGLSupported] = useState(true);
 		img.style.minHeight = "50%";
 		img.style.maxHeight = "50%";
 
-		// Nest elements
 		innerDiv.appendChild(img);
 		markerEl.appendChild(innerDiv);
-
 
 		new mapboxgl.Marker(markerEl)
 			.setLngLat([21.0, 52.22])
@@ -113,7 +123,6 @@ const [webGLSupported, setWebGLSupported] = useState(true);
 		};
 	}, []);
 
-	// Detect <html> (dark/light)
 	useEffect(() => {
 		const observer = new MutationObserver(() => {
 			const dark = document.documentElement.classList.contains("dark");
@@ -122,8 +131,9 @@ const [webGLSupported, setWebGLSupported] = useState(true);
 					? "mapbox://styles/mapbox/navigation-night-v1"
 					: "mapbox://styles/mapbox/standard";
 
-				mapInstance.current.setStyle(newStyle);
-				currentStyle.current = newStyle;
+				if (mapInstance.current) {
+					mapInstance.current.setStyle(newStyle);
+				}
 				setIsDark(dark);
 			}
 		});
@@ -134,23 +144,27 @@ const [webGLSupported, setWebGLSupported] = useState(true);
 	}, [isDark]);
 
 	useEffect(() => {
-		if (zoomIndex === 0) {
-			setPlusVisible(false);
-		} else {
-			setPlusVisible(true);
-		}
+		setPlusVisible(zoomIndex !== 0);
 	}, [zoomIndex]);
 
 	if (!webGLSupported) {
 		return (
-			<div style={{
-				width: "100%", height: "100%",
-				display: "flex", flexDirection: "column",
-				alignItems: "center", justifyContent: "center",
-				gap: 8, padding: 16, boxSizing: "border-box",
-				color: isDark ? "#a1a1aa" : "#71717a",
-				fontSize: 13, textAlign: "center",
-			}}>
+			<div
+				style={{
+					width: "100%",
+					height: "100%",
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
+					justifyContent: "center",
+					gap: 8,
+					padding: 16,
+					boxSizing: "border-box",
+					color: isDark ? "#a1a1aa" : "#71717a",
+					fontSize: 13,
+					textAlign: "center",
+				}}
+			>
 				<span style={{ fontSize: 28 }}>🗺️</span>
 				<span>Map unavailable</span>
 				<span style={{ fontSize: 11, opacity: 0.7 }}>Enable hardware acceleration in your browser</span>
@@ -166,74 +180,45 @@ const [webGLSupported, setWebGLSupported] = useState(true);
 			<div
 				style={{
 					position: "absolute",
-					bottom: 50,
-					left: 10,
+					bottom: 65,
+					left: 14,
+					right: 14,
 					display: "flex",
-					flexDirection: "row",
-					width: "95%"
+					justifyContent: "space-between",
+					pointerEvents: "none",
 				}}
 			>
 				<button
 					onClick={handleZoomOut}
-					onMouseEnter={(e) => {
-						e.currentTarget.style.boxShadow =
-							isDark
-								? "rgb(0 0 0 / 40%) 0px 0px 0px 1px, rgba(0 0 0 / 25%) 0px 0px 0px 6px"
-								: "rgb(255 255 255 / 40%) 0px 0px 0px 1px, rgba(255 255 255 / 25%) 0px 0px 0px 6px";
+					onMouseEnter={e => {
+						e.currentTarget.style.transform = "scale(1.08)";
 					}}
-					onMouseLeave={(e) => {
-						e.currentTarget.style.boxShadow = "none";
+					onMouseLeave={e => {
+						e.currentTarget.style.transform = "scale(1)";
 					}}
 					style={{
-						background: isDark ? "#000" : "#fff",
-						color: isDark ? "#fff" : "#000",
-						width: 36,
-						height: 36,
-						borderRadius: 18,
-						position: "absolute",
-						bottom: 14,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						transition: "box-shadow 0.2s",
-						willChange: "transform",
-						cursor: "pointer",
-						zIndex: 1,
+						...controlButtonStyle,
+						pointerEvents: "auto",
 					}}
 				>
-					-
+					<span style={{ fontSize: 22, lineHeight: 1 }}>−</span>
 				</button>
+
 				<button
 					onClick={handleZoomIn}
-					onMouseEnter={(e) => {
-						e.currentTarget.style.boxShadow =
-							isDark
-								? "rgb(0 0 0 / 40%) 0px 0px 0px 2px, rgba(0 0 0 / 25%) 0px 0px 0px 8px"
-								: "rgb(255 255 255 / 40%) 0px 0px 0px 1px, rgba(255 255 255 / 25%) 0px 0px 0px 6px";
+					onMouseEnter={e => {
+						e.currentTarget.style.transform = "scale(1.08)";
 					}}
-					onMouseLeave={(e) => {
-						e.currentTarget.style.boxShadow = "none";
+					onMouseLeave={e => {
+						e.currentTarget.style.transform = "scale(1)";
 					}}
 					style={{
-						background: isDark ? "#000" : "#fff",
-						color: isDark ? "#fff" : "#000",
-						width: 36,
-						height: 36,
-						borderRadius: 18,
-						position: "absolute",
-						bottom: 14,
-						right: 14,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						willChange: "transform",
-						cursor: "pointer",
-						zIndex: 1,
+						...controlButtonStyle,
 						opacity: plusVisible ? 1 : 0,
-						transition: 'box-shadow 0.2s, opacity 0.3s ease',
+						pointerEvents: plusVisible ? "auto" : "none",
 					}}
 				>
-					+
+					<span style={{ fontSize: 22, lineHeight: 1 }}>+</span>
 				</button>
 			</div>
 		</div>
