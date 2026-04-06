@@ -1,0 +1,348 @@
+<section class="sixel-card" aria-label="Sixel terminal animation">
+  <div
+    class="sixel-sheet"
+    role="img"
+    aria-label="Animated sixel terminal panel"
+  >
+    <div class="sixel-dots" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="sixel-screen">
+      <div class="sixel-head">#project: sixel</div>
+
+      <div class="sixel-print">
+        <pre
+          class="sixel-log">$ running sixel
+connecting..
+downloading..
+reading metadata
+extracting text
+using OCR
+matching client
+detecting document type
+choosing destination folder
+sorting into accounting structure
+checking duplicates
+moving file to final path
+saving metadata
+done</pre>
+        <div class="sixel-cursor" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+
+  <a
+    href="/about/sixel"
+    transition:name="sixel-hero-button"
+    aria-label="See more details about sixel"
+    title="See more details"
+    class="sixel-more"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      class="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M7 17L17 7"></path>
+      <path d="M9 7h8v8"></path>
+    </svg>
+  </a>
+</section>
+
+<style>
+  .sixel-card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: inherit;
+    background:
+      radial-gradient(
+        circle at 12% 22%,
+        rgba(37, 150, 190, 0.2),
+        transparent 58%
+      ),
+      radial-gradient(
+        circle at 82% 84%,
+        rgba(56, 189, 248, 0.17),
+        transparent 60%
+      ),
+      linear-gradient(145deg, #eef4fb, #dbe8f7 54%, #ccdff2);
+  }
+
+  .sixel-more {
+    position: absolute;
+    right: 0.8rem;
+    bottom: 0.8rem;
+    z-index: 4;
+    display: flex;
+    height: 3rem;
+    width: 3rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+    text-decoration: none;
+    transition: transform 0.3s ease;
+  }
+
+  :global(.dark) .sixel-more {
+    background: rgba(9, 9, 11, 0.8);
+    color: #fff;
+  }
+
+  .sixel-more:hover {
+    transform: scale(1.1);
+  }
+
+  :global(.dark) .sixel-card {
+    background:
+      radial-gradient(
+        circle at 12% 22%,
+        rgba(37, 150, 190, 0.22),
+        transparent 55%
+      ),
+      radial-gradient(
+        circle at 82% 84%,
+        rgba(54, 74, 170, 0.18),
+        transparent 58%
+      ),
+      linear-gradient(145deg, #121212, #1d1d24 58%, #2b2b3a);
+  }
+
+  .sixel-sheet {
+    width: min(86%, 16.8rem);
+    aspect-ratio: 16 / 10;
+    border-radius: 0.9rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.1),
+      0 1.1rem 1.6rem -0.9rem rgba(15, 23, 42, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transform: scale(0.88);
+    transform-origin: center;
+  }
+
+  :global(.dark) .sixel-sheet {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.14),
+      0 1.1rem 1.6rem -0.9rem rgba(0, 0, 0, 0.8),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+
+  .sixel-dots {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1.55rem;
+    background: #e6edf7;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding-inline: 0.45rem;
+    z-index: 2;
+  }
+
+  :global(.dark) .sixel-dots {
+    background: #2e2e35;
+  }
+
+  .sixel-dots span {
+    width: 0.52rem;
+    height: 0.52rem;
+    border-radius: 999px;
+    background: #a4b3c8;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45);
+  }
+
+  .sixel-dots span:nth-child(1) {
+    background: #ff5f56;
+  }
+
+  .sixel-dots span:nth-child(2) {
+    background: #ffbd2e;
+  }
+
+  .sixel-dots span:nth-child(3) {
+    background: #27c93f;
+  }
+
+  :global(.dark) .sixel-dots span {
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  }
+
+  .sixel-screen {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(#f8fbff, #e9f1fb);
+  }
+
+  :global(.dark) .sixel-screen {
+    background: linear-gradient(#23232a, #19191f);
+  }
+
+  .sixel-head {
+    position: absolute;
+    top: 1.55rem;
+    left: 0;
+    right: 0;
+    height: 1.35rem;
+    display: flex;
+    align-items: center;
+    padding-inline: 0.5rem;
+    font-size: 0.47rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: rgba(14, 45, 63, 0.76);
+    background: rgba(255, 255, 255, 0.55);
+    border-top: 1px solid rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(3, 19, 35, 0.1);
+  }
+
+  :global(.dark) .sixel-head {
+    color: rgba(233, 245, 249, 0.84);
+    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.35);
+  }
+
+  .sixel-print {
+    position: absolute;
+    inset: 2.95rem 0.42rem 0.42rem 0.42rem;
+    background: #f3f8ff;
+    border-radius: 0.35rem;
+    border: 1px solid rgba(6, 63, 95, 0.08);
+    overflow: hidden;
+  }
+
+  :global(.dark) .sixel-print {
+    background: #1a1a22;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .sixel-log {
+    margin: 0;
+    position: absolute;
+    top: 0.52rem;
+    left: 0.54rem;
+    right: 0.54rem;
+    font-family: "Courier New", monospace;
+    font-size: 0.54rem;
+    line-height: 1.3;
+    color: #1b8bb3;
+    white-space: pre;
+    animation: sixelScroll 8.2s linear infinite;
+    text-shadow: 0 0 8px rgba(27, 139, 179, 0.22);
+  }
+
+  :global(.dark) .sixel-log {
+    color: #5ef58c;
+    text-shadow: 0 0 8px rgba(94, 245, 140, 0.24);
+  }
+
+  .sixel-cursor {
+    position: absolute;
+    width: 0.56rem;
+    height: 0.08rem;
+    background: #1b8bb3;
+    box-shadow: 0 0 6px rgba(27, 139, 179, 0.58);
+    top: 0.68rem;
+    left: 0.54rem;
+    animation: sixelCarriage 8.2s linear infinite;
+  }
+
+  :global(.dark) .sixel-cursor {
+    background: #5ef58c;
+    box-shadow: 0 0 6px rgba(94, 245, 140, 0.6);
+  }
+
+  @keyframes sixelScroll {
+    0%,
+    42% {
+      transform: translateY(0);
+    }
+
+    55% {
+      transform: translateY(-16%);
+    }
+
+    68% {
+      transform: translateY(-31%);
+    }
+
+    82% {
+      transform: translateY(-46%);
+    }
+
+    100% {
+      transform: translateY(-58%);
+    }
+  }
+
+  @keyframes sixelCarriage {
+    0%,
+    10% {
+      transform: translate(0, 0);
+    }
+    15% {
+      transform: translate(2.9rem, 0);
+    }
+    20% {
+      transform: translate(5.2rem, 0);
+    }
+    25% {
+      transform: translate(6.8rem, 0);
+    }
+    30% {
+      transform: translate(0, 0.72rem);
+    }
+    35% {
+      transform: translate(3.8rem, 0.72rem);
+    }
+    40% {
+      transform: translate(0, 1.44rem);
+    }
+    45% {
+      transform: translate(4.9rem, 1.44rem);
+    }
+    50% {
+      transform: translate(0, 2.16rem);
+    }
+    60% {
+      transform: translate(5.7rem, 2.16rem);
+    }
+    70% {
+      transform: translate(0, 2.88rem);
+    }
+    80% {
+      transform: translate(6.1rem, 2.88rem);
+    }
+    90% {
+      transform: translate(0, 3.6rem);
+    }
+    100% {
+      transform: translate(0, 0);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .sixel-sheet {
+      transform: scale(0.79);
+    }
+  }
+</style>

@@ -1,0 +1,41 @@
+---
+import Github from "../assets/github.astro";
+import Linkedin from "../assets/linkedin.astro";
+import Mail from "../assets/mail.astro";
+---
+
+<div class="flex gap-4 h-14 lg:contents">
+  <div class="flex-1 bg-purple-500 dark:bg-zinc-900 rounded-2xl lg:col-start-8">
+    <a
+      class="text-white dark:text-zinc-400 h-full w-full flex justify-center items-center dark:hover:text-white transition-colors"
+      href="https://github.com/YetonDew"
+      target="_blank"
+      aria-label="github"
+      title="github YetonDew"
+    >
+      <Github />
+    </a>
+  </div>
+  <div class="flex-1 bg-blue-dark dark:bg-zinc-900 rounded-2xl lg:col-start-9">
+    <a
+      class="text-white dark:text-zinc-400 h-full w-full flex justify-center items-center dark:hover:text-white transition-colors"
+      href="https://www.linkedin.com/in/yeton/"
+      target="_blank"
+      aria-label="linkedin"
+      title="linkedin YetonDew"
+    >
+      <Linkedin />
+    </a>
+  </div>
+  <div class="flex-1 bg-orange dark:bg-zinc-900 rounded-2xl lg:col-start-10">
+    <a
+      class="text-white dark:text-zinc-400 h-full w-full flex justify-center items-center dark:hover:text-white transition-colors"
+      href="https://www.linkedin.com/in/yeton/"
+      target="_blank"
+      aria-label="mail"
+      title="mail YetonDew"
+    >
+      <Mail />
+    </a>
+  </div>
+</div>
