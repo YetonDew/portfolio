@@ -1,6 +1,6 @@
 # Portfolio
 
-Personal portfolio built with Astro + React, featuring a bento-style layout, interactive Mapbox map, technology slider, and a global like counter with confetti.
+Personal portfolio built with Astro + React, featuring a bento-style layout, interactive Mapbox map, technology slider, and a GitHub stars card with confetti.
 
 ## Stack
 
@@ -17,11 +17,11 @@ Personal portfolio built with Astro + React, featuring a bento-style layout, int
 - Light/dark mode
 - Interactive map card with theme-aware style
 - Infinite technology slider
-- Like counter with:
-  - Increment and decrement (`like` / `unlike`)
-  - Per-browser cookie (`portfolio_liked`)
-  - Confetti effect on like
-  - Optimistic UI updates
+- GitHub stars card with:
+  - Live stars count from GitHub REST API
+  - Link to repo stargazers page
+  - Per-browser visual "starred" state for UI feedback
+  - Confetti effect on click
 
 ## Main Structure
 
@@ -35,10 +35,15 @@ src/
     LikeButton.jsx
   pages/
     index.astro
-    api/
-      likes.ts
+    about.astro
+    about/
+      [slug].astro
   layouts/
     Layout.astro
+  content/
+    config.ts
+    about/
+      more-about-my-journey.md
 ```
 
 ## Environment Variables
@@ -52,6 +57,7 @@ PUBLIC_MAPBOX_TOKEN=your_mapbox_public_token
 A template is included in `.env.example`.
 
 Notes:
+
 - Use `PUBLIC_` because this token is exposed to the client (frontend).
 - Do not commit `.env` to the repository.
 
@@ -64,25 +70,39 @@ pnpm build
 pnpm preview
 ```
 
-## Likes API
+## Astro Content Collections
 
-Endpoint file: `src/pages/api/likes.ts`
+This project uses Astro Content Collections to manage article-like pages from Markdown files.
 
-- `GET /api/likes`
-  - Returns `{ count }`
-- `POST /api/likes`
-  - If cookie `portfolio_liked=1` does not exist: increments and sets cookie
-  - If cookie already exists: does not increment
-- `DELETE /api/likes`
-  - If cookie exists: decrements (minimum 0) and clears cookie
+- Collection config: `src/content/config.ts`
+- Collection name: `about`
+- Content folder: `src/content/about/`
+- Example entry: `src/content/about/more-about-my-journey.md`
 
-### Current persistence model
+Each Markdown file contains frontmatter (`title`, `label`, `description`) and body content.
+The dynamic template reads that metadata and renders the article body through Astro's content API.
 
-The counter is currently stored in `/tmp/portfolio_likes.json`.
+### Adding a New Article
 
-This works locally, but in serverless environments (such as Vercel), `/tmp` is ephemeral. The counter may reset across executions or deployments.
+1. Create a new `.md` file in `src/content/about/`.
+2. Add frontmatter fields that match the collection schema.
+3. Use the file name as the route slug (for example: `my-story.md` -> `/about/my-story`).
 
-For true production persistence, migrate storage to a DB/KV solution (for example Vercel KV, Supabase, Redis, etc.).
+## Routing and Navigation
+
+Routing combines static pages, dynamic routes, redirect helpers, and client-side transitions.
+
+- Home page: `src/pages/index.astro`
+- About redirect entry: `src/pages/about.astro`
+- Dynamic article route: `src/pages/about/[slug].astro`
+
+### How It Works
+
+1. `src/pages/about.astro` redirects to the current default article route.
+2. `src/pages/about/[slug].astro` uses `getStaticPaths()` with the `about` collection to generate pages.
+3. `ClientRouter` is enabled in `src/layouts/Layout.astro` so route changes happen without full page reload.
+4. Shared-element transitions (`transition:name`) are used between the main "more info" button and the About close button.
+5. Theme state is reapplied on `astro:page-load`, so dark/light mode stays consistent across client-side navigation.
 
 ## Vercel Deployment
 
@@ -115,13 +135,15 @@ This project is already configured for Vercel in `astro.config.mjs`:
 If a secret is committed again, GitHub push protection will block the push.
 
 Best practices:
+
 - Never hardcode secrets/tokens in source code
 - Use `.env` for local development
 - Use environment variables in Vercel/GitHub Actions
 
-### 3) Like counter does not persist in production
+### 3) Stars count does not update immediately
 
-This is expected with `/tmp` on serverless. Migrate storage for durable persistence.
+- The stars count comes from GitHub API and may not update instantly due to caching/rate limits.
+- The component re-fetches stars when the tab regains focus.
 
 ## Useful Commands
 
