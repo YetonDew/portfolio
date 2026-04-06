@@ -4,10 +4,12 @@ import Linkedin from "../assets/linkedin.astro";
 import Mail from "../assets/mail.astro";
 ---
 
-<div class="flex gap-4 h-14 lg:contents">
-  <div class="flex-1 bg-purple-500 dark:bg-zinc-900 rounded-2xl lg:col-start-8">
+<div
+  class="grid grid-cols-3 gap-2 h-18 px-1 sm:gap-3 sm:h-14 sm:px-0 lg:contents"
+>
+  <div class="bg-purple-500 dark:bg-zinc-900 rounded-2xl lg:col-start-8">
     <a
-      class="text-white dark:text-zinc-400 h-full w-full flex justify-center items-center dark:hover:text-white transition-colors"
+      class="social-link text-white dark:text-zinc-400 h-full w-full flex justify-center items-center dark:hover:text-white transition-colors"
       href="https://github.com/YetonDew"
       target="_blank"
       aria-label="github"
@@ -16,9 +18,9 @@ import Mail from "../assets/mail.astro";
       <Github />
     </a>
   </div>
-  <div class="flex-1 bg-blue-dark dark:bg-zinc-900 rounded-2xl lg:col-start-9">
+  <div class="bg-blue-dark dark:bg-zinc-900 rounded-2xl lg:col-start-9">
     <a
-      class="text-white dark:text-zinc-400 h-full w-full flex justify-center items-center dark:hover:text-white transition-colors"
+      class="social-link text-white dark:text-zinc-400 h-full w-full flex justify-center items-center dark:hover:text-white transition-colors"
       href="https://www.linkedin.com/in/yeton/"
       target="_blank"
       aria-label="linkedin"
@@ -27,9 +29,9 @@ import Mail from "../assets/mail.astro";
       <Linkedin />
     </a>
   </div>
-  <div class="flex-1 bg-orange dark:bg-zinc-900 rounded-2xl lg:col-start-10">
+  <div class="bg-orange dark:bg-zinc-900 rounded-2xl lg:col-start-10">
     <a
-      class="text-white dark:text-zinc-400 h-full w-full flex justify-center items-center dark:hover:text-white transition-colors"
+      class="social-link text-white dark:text-zinc-400 h-full w-full flex justify-center items-center dark:hover:text-white transition-colors"
       href="https://www.linkedin.com/in/yeton/"
       target="_blank"
       aria-label="mail"
@@ -39,3 +41,12 @@ import Mail from "../assets/mail.astro";
     </a>
   </div>
 </div>
+
+<style>
+  @media (max-width: 640px) {
+    .social-link :global(svg) {
+      width: 34px;
+      height: 34px;
+    }
+  }
+</style>
