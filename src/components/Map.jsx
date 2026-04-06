@@ -2,17 +2,20 @@ import { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN;
+const mapboxToken = import.meta.env.PUBLIC_MAPBOX_TOKEN;
+mapboxgl.accessToken = mapboxToken ?? "";
 
 export default function Map() {
 	const mapContainer = useRef(null);
 	const mapInstance = useRef(null);
+	const hasMapboxToken = Boolean(mapboxToken);
 	const [isDark, setIsDark] = useState(
 		typeof document !== "undefined" && document.documentElement.classList.contains("dark")
 	);
 	const [webGLSupported, setWebGLSupported] = useState(true);
 	const zoomLevels = [9, 5, 3];
 	const [zoomIndex, setZoomIndex] = useState(0);
+	const [minusVisible, setMinusVisible] = useState(true);
 	const [plusVisible, setPlusVisible] = useState(false);
 
 	const controlButtonStyle = {
@@ -57,6 +60,7 @@ export default function Map() {
 
 	useEffect(() => {
 		if (typeof window === "undefined") return;
+		if (!hasMapboxToken) return;
 		if (!mapboxgl.supported()) {
 			setWebGLSupported(false);
 			return;
@@ -121,7 +125,7 @@ export default function Map() {
 			mapInstance.current.remove();
 			mapInstance.current = null;
 		};
-	}, []);
+	}, [hasMapboxToken]);
 
 	useEffect(() => {
 		const observer = new MutationObserver(() => {
@@ -144,10 +148,11 @@ export default function Map() {
 	}, [isDark]);
 
 	useEffect(() => {
+		setMinusVisible(zoomIndex !== zoomLevels.length - 1);
 		setPlusVisible(zoomIndex !== 0);
 	}, [zoomIndex]);
 
-	if (!webGLSupported) {
+	if (!hasMapboxToken || !webGLSupported) {
 		return (
 			<div
 				style={{
@@ -167,7 +172,11 @@ export default function Map() {
 			>
 				<span style={{ fontSize: 28 }}>🗺️</span>
 				<span>Map unavailable</span>
-				<span style={{ fontSize: 11, opacity: 0.7 }}>Enable hardware acceleration in your browser</span>
+				<span style={{ fontSize: 11, opacity: 0.7 }}>
+					{!hasMapboxToken
+						? "Add PUBLIC_MAPBOX_TOKEN in Vercel environment variables"
+						: "Enable hardware acceleration in your browser"}
+				</span>
 			</div>
 		);
 	}
@@ -198,7 +207,8 @@ export default function Map() {
 					}}
 					style={{
 						...controlButtonStyle,
-						pointerEvents: "auto",
+						opacity: minusVisible ? 1 : 0,
+						pointerEvents: minusVisible ? "auto" : "none",
 					}}
 				>
 					<span style={{ fontSize: 22, lineHeight: 1 }}>−</span>
