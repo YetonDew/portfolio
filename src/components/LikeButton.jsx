@@ -16,8 +16,8 @@ function StarIcon({ filled, scale = 1 }) {
 		>
 			<path
 				d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-				fill={filled ? "rgba(212,175,55,0.95)" : "none"}
-				stroke={filled ? "rgba(212,175,55,0.95)" : "currentColor"}
+				fill={filled ? "rgb(255, 221, 21)" : "none"}
+				stroke={filled ? "rgb(255, 221, 21)" : "currentColor"}
 				strokeWidth="2"
 				strokeLinecap="round"
 				strokeLinejoin="round"
@@ -116,7 +116,7 @@ export default function LikeButton({ repo = "YetonDew/portfolio" }) {
 
 	const text = isDark ? "#e4e4e7" : "#27272a";
 	const sub = isDark ? "#71717a" : "#a1a1aa";
-	const border = isDark ? "rgba(212,175,55,0.95)" : "rgba(212,175,55,0.95)";
+	const border = "rgb(255, 221, 21)";
 
 	return (
 		<div style={{
@@ -152,7 +152,6 @@ export default function LikeButton({ repo = "YetonDew/portfolio" }) {
 					transition: "transform 0.3s cubic-bezier(.34,1.56,.64,1), border-color 0.3s ease",
 					color: border,
 					background: isDark ? "transparent" : "transparent",
-					boxShadow: isDark ? "0 8px 24px rgba(0,0,0,0.08)" : "none",
 				}}
 				onMouseEnter={e => {
 					setStarHovered(true);
