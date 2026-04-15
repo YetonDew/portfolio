@@ -6,6 +6,8 @@ const aboutCollection = defineCollection({
 		title: z.string(),
 		label: z.string().default("Article"),
 		description: z.string().optional(),
+		repoUrl: z.string().url().optional(),
+		repoLabel: z.string().optional(),
 	}),
 });
 

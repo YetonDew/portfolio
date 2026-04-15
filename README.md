@@ -43,7 +43,7 @@ src/
   content/
     config.ts
     about/
-      more-about-my-journey.md
+      about-me.md
 ```
 
 ## Environment Variables
@@ -77,7 +77,7 @@ This project uses Astro Content Collections to manage article-like pages from Ma
 - Collection config: `src/content/config.ts`
 - Collection name: `about`
 - Content folder: `src/content/about/`
-- Example entry: `src/content/about/more-about-my-journey.md`
+- Example entry: `src/content/about/about-me.md`
 
 Each Markdown file contains frontmatter (`title`, `label`, `description`) and body content.
 The dynamic template reads that metadata and renders the article body through Astro's content API.

@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+import Github from "../../assets/github.astro";
 
 export const prerender = true;
 
@@ -14,7 +15,8 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
-const backButtonTransitionName = entry.slug === "sixel" ? "sixel-hero-button" : "about-hero-button";
+const backButtonTransitionName =
+  entry.slug === "sixel" ? "sixel-hero-button" : "about-hero-button";
 ---
 
 <Layout title={`${entry.data.title} | YetonDew Portfolio`}>
@@ -58,6 +60,22 @@ const backButtonTransitionName = entry.slug === "sixel" ? "sixel-hero-button" : 
             {entry.data.title}
           </h1>
         </div>
+
+        {
+          entry.data.repoUrl && (
+            <a
+              href={entry.data.repoUrl}
+              target="_blank"
+              rel="noreferrer"
+              class="repo-link inline-flex h-12 shrink-0 items-center gap-3 rounded-full bg-zinc-900 px-4 text-sm font-medium text-white shadow-lg shadow-black/10 transition-transform duration-300 ease-out hover:scale-105 dark:bg-white dark:text-zinc-900"
+              aria-label={entry.data.repoLabel ?? "Open GitHub repository"}
+              title={entry.data.repoLabel ?? "Open GitHub repository"}
+            >
+              <Github />
+              <span>{entry.data.repoLabel ?? "GitHub"}</span>
+            </a>
+          )
+        }
       </div>
 
       <article class="markdown-content text-zinc-700 dark:text-zinc-300">
@@ -68,6 +86,12 @@ const backButtonTransitionName = entry.slug === "sixel" ? "sixel-hero-button" : 
 </Layout>
 
 <style>
+  .repo-link :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex-shrink: 0;
+  }
+
   .markdown-content :global(p) {
     margin: 0 0 1rem;
     line-height: 1.8;
