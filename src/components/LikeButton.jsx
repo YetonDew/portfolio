@@ -33,22 +33,70 @@ export default function LikeButton({ repo = "YetonDew/portfolio" }) {
 	const [starHovered, setStarHovered] = useState(false);
 	const [starFilled, setStarFilled] = useState(false);
 	const buttonRef = useRef(null);
+	const countRef = useRef(null);
 	const repoUrl = `https://github.com/${repo}`;
-	const starUrl = `${repoUrl}/stargazers`;
+	const starUrl = `${repoUrl}/`;
 	const starredKey = `portfolio_starred_${repo}`;
+	const countCacheKey = `portfolio_star_count_${repo}`;
 
 	const fetchStars = async () => {
+		const setAndCacheCount = (value) => {
+			setCount(value);
+			countRef.current = value;
+			try {
+				localStorage.setItem(countCacheKey, String(value));
+			} catch {
+				// ignore storage failures
+			}
+		};
+
 		try {
-			const res = await fetch(`https://api.github.com/repos/${repo}`);
+			const res = await fetch(`https://api.github.com/repos/${repo}`, {
+				headers: { Accept: "application/vnd.github+json" },
+			});
 			if (!res.ok) {
 				throw new Error("Failed to fetch GitHub stars");
 			}
 			const data = await res.json();
-			setCount(typeof data.stargazers_count === "number" ? data.stargazers_count : 0);
+			if (typeof data.stargazers_count === "number") {
+				setAndCacheCount(data.stargazers_count);
+				return;
+			}
+			throw new Error("Invalid GitHub response");
 		} catch {
-			setCount(0);
+			// Fallback source to avoid false 0 when GitHub API hits rate limit.
+			try {
+				const fallbackRes = await fetch(`https://img.shields.io/github/stars/${repo}.json`);
+				if (fallbackRes.ok) {
+					const fallbackData = await fallbackRes.json();
+					const parsed = Number(fallbackData?.value ?? fallbackData?.message);
+					if (Number.isFinite(parsed)) {
+						setAndCacheCount(parsed);
+						return;
+					}
+				}
+			} catch {
+				// ignore fallback failures
+			}
+
+			// Keep last known value, then fallback to local cache.
+			if (countRef.current !== null) return;
+			try {
+				const cached = localStorage.getItem(countCacheKey);
+				const parsed = cached === null ? NaN : Number(cached);
+				if (Number.isFinite(parsed)) {
+					setCount(parsed);
+					countRef.current = parsed;
+				}
+			} catch {
+				// ignore storage failures
+			}
 		}
 	};
+
+	useEffect(() => {
+		countRef.current = count;
+	}, [count]);
 
 	useEffect(() => {
 		// Dark mode observer
@@ -62,6 +110,18 @@ export default function LikeButton({ repo = "YetonDew/portfolio" }) {
 			setStarFilled(localStorage.getItem(starredKey) === "1");
 		} catch {
 			setStarFilled(false);
+		}
+
+		// Warm up UI quickly from cached star count while network request is pending.
+		try {
+			const cached = localStorage.getItem(countCacheKey);
+			const parsed = cached === null ? NaN : Number(cached);
+			if (Number.isFinite(parsed)) {
+				setCount(parsed);
+				countRef.current = parsed;
+			}
+		} catch {
+			// ignore storage failures
 		}
 
 		// Fetch stars from GitHub repo
